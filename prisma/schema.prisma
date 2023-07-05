@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = "mysql://cuppa:FZrP@Q3uuRZ*i7L@mysql-cuppa.alwaysdata.net/cuppa_gayeem"
+}
+
+model room {
+  id_room   Int    @id @default(autoincrement())
+  room_name String @db.VarChar(40)
+}
+
+model users {
+  id                  Int     @id @default(autoincrement())
+  username            String  @unique(map: "username") @db.VarChar(255)
+  password            String  @db.VarChar(255)
+  role                String  @db.VarChar(255)
+  state               String? @default("active") @db.VarChar(255)
+  email               String  @unique(map: "email") @db.VarChar(255)
+  idMaster            Int?
+  verification_number Int?
+  users               users?  @relation("usersTousers", fields: [idMaster], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "fk_user_master")
+  other_users         users[] @relation("usersTousers")
+
+  @@index([idMaster], map: "fk_user_master")
+}
