@@ -116,6 +116,37 @@ class LoginController {
 	};
 
 
+	static async sendVerificationNumber(req: Request, res: Response) {
+		const { username } = req.body;
+	
+		try {
+		  await Authentication.sendVerificationNumber(username);
+	
+		  res.status(200).json({ message: 'Verification number sent successfully.' });
+		} catch (error) {
+		  console.error('Error sending verification number:', error);
+		  res.status(500).json({ error: 'Failed to send verification number.' });
+		}
+	  }
+	
+	  static async verifyNumber(req: Request, res: Response) {
+		const { username, verificationNumber } = req.body;
+	
+		try {
+		  const verified = await Authentication.verifyVerificationNumber(username, verificationNumber);
+	
+		  if (verified) {
+			res.status(200).json({ message: 'Verification successful.' , id:verified.id });
+		  } else {
+			res.status(400).json({ error: 'Invalid verification number.' });
+		  }
+		} catch (error) {
+		  console.error('Error verifying verification number:', error);
+		  res.status(500).json({ error: 'Failed to verify verification number.' });
+		}
+	  }
+
+
 
 
 

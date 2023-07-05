@@ -8,8 +8,13 @@ datasource db {
 }
 
 model room {
-  id_room   Int    @id @default(autoincrement())
-  room_name String @db.VarChar(40)
+  id     Int    @id @default(autoincrement())
+  type   String @db.VarChar(55)
+  name   String @db.VarChar(255)
+  idUser Int
+  users  users  @relation(fields: [idUser], references: [id], onUpdate: Restrict, map: "room_ibfk_1")
+
+  @@index([idUser], map: "idUser")
 }
 
 model users {
@@ -21,6 +26,7 @@ model users {
   email               String  @unique(map: "email") @db.VarChar(255)
   idMaster            Int?
   verification_number Int?
+  room                room[]
   users               users?  @relation("usersTousers", fields: [idMaster], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "fk_user_master")
   other_users         users[] @relation("usersTousers")
 

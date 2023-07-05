@@ -1,7 +1,7 @@
 
 
 import prisma from "../../prisma/dbConnection"
-
+import bcrypt from "bcryptjs";
 class UserManagementService {
 
     static delete = async (requesterId: number, userId: number, nextMaster?: number) => {
@@ -111,6 +111,19 @@ class UserManagementService {
           throw new Error("Failed to modify user.");
         }
       };
+
+    static changePassword = async ( userId: number, password: string ) => {
+        try {
+          const hashedPassword = await bcrypt.hash(password, 10);
+          await prisma.users.update({ where: { id: userId }, data: { password :hashedPassword   } });
+        } catch (error) {
+          console.error("Error changing password:", error);
+          throw new Error("Failed to change password.");
+        }
+      }
+
+    
+
 
 }
 

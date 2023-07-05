@@ -14,4 +14,5 @@ route.get('/getMyUsers',Authentification(['master']), userManagementController.g
 route.post('/activate'  ,Authentification(['master','slave']),   userManagementController.changeState); 
 route.post('/delete/:id',Authentification(['master','slave']),userManagementController.delete);
 route.post('/modifey',Authentification(['master','slave']),userManagementController.modifey);
+route.post('/changePassword',userManagementController.changePassword);
 export default route;

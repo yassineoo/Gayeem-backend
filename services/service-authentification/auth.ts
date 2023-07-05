@@ -171,7 +171,7 @@ class  Authentication {
 	};
 
 
-	async sendVerificationNumber(username: string): Promise<void> {
+	static async sendVerificationNumber(username: string) {
 		const user = await prisma.users.findFirst({ where: { username: username } });
     
 		if (!user) {
@@ -207,15 +207,32 @@ class  Authentication {
 		  to: user.email, // list of receivers
 		  subject: "verfivication number", // Subject line
 		  html: `
-			<p>someone has tried to reset password and this is your verfivication number ${78564} if u are not the one who did this pleas tell us 
+			<p>someone has tried to reset password and this is your verfivication number ${verificationNumber} if u are not the one who did this pleas tell us 
 			 </p>
 		  `, // HTML body
 		});
 	  
 		console.log(`Message sent: ${info.messageId}`);
+		return {message:"email sent"};
 	  }
+	static async verifyVerificationNumber(username: string, enteredVerificationNumber: number) {
+		const user = await prisma.users.findFirst({ where: { username: username } });
+	  
+		if (!user) {
+		  throw new Error("User not found.");
+		}
+	  
+		// Check if the entered verification number matches the one stored in the database
+		if (user.verification_number === enteredVerificationNumber) {
+		  return {id:user.id}; // Verification number is valid
+		} else {
+		  return {}; // Verification number is invalid
+		}
+	  }
+	  
 
-	 generateVerificationNumber(length: number): string {
+
+	static generateVerificationNumber(length: number): string {
 		const characters = '0123456789';
 		let verificationNumber = '';
 	  

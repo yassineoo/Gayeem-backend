@@ -44,6 +44,22 @@ class userManagmentController {
           res.status(500).json({ error: "Failed to delete user." });
         }
       };
+
+      static changePassword = async (req: Request, res: Response) => {
+        try {
+          
+          const { id, password } = req.body;
+    
+          await UserManagementService.changePassword(id, password);
+    
+          res.status(200).json({ message: "User's password changed successfully." });
+ 
+        }
+        catch (error) {
+          console.error("Error changing user's password:", error);
+          res.status(500).json({ error: "Failed to change user's password." });
+        }
+      };
     
       static modifey = async (req: Request, res: Response) => {
         try {
