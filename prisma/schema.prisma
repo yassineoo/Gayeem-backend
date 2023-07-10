@@ -26,6 +26,7 @@ model users {
   email                                         String        @unique(map: "email") @db.VarChar(255)
   idMaster                                      Int?
   verification_number                           Int?
+  selectedAvatarId                              Int?
   invitations_invitations_master_user_idTousers invitations[] @relation("invitations_master_user_idTousers")
   invitations_invitations_slave_user_idTousers  invitations[] @relation("invitations_slave_user_idTousers")
   room                                          room[]

@@ -123,8 +123,12 @@ class  Authentication {
 
 
 	static signUp = async (loginData) => {
-		const { username, password, email, invitation_code } = loginData;
+		const { username, password, email, invitation_code ,selectedAvatarId } = loginData;
 		let user;
+		console.log(`loginData ------------------`)
+		console.log(loginData);
+       
+        console.log(`loginData ------------------`)
 	  
 		// Find user by username
 		user = await prisma.users.findFirst({
@@ -156,6 +160,7 @@ class  Authentication {
 			  email,
 			  idMaster: master_user_id,
 			  role: 'slave',
+			  selectedAvatarId
 			},
 		  });
 	  
@@ -173,6 +178,7 @@ class  Authentication {
 			  email,
 			  role: 'master',
 			  idMaster: null,
+			  selectedAvatarId ,
 			},
 		  });
 		}
