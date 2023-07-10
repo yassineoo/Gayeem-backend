@@ -7,6 +7,20 @@ datasource db {
   url      = "mysql://cuppa:FZrP@Q3uuRZ*i7L@mysql-cuppa.alwaysdata.net/cuppa_gayeem"
 }
 
+model invitations {
+  id                                      Int       @id @default(autoincrement())
+  invitation_code                         String    @unique(map: "invitation_code") @db.VarChar(10)
+  master_user_id                          Int
+  slave_user_id                           Int?
+  is_accepted                             Int       @default(0)
+  created_at                              DateTime? @default(now()) @db.DateTime(0)
+  users_invitations_master_user_idTousers users     @relation("invitations_master_user_idTousers", fields: [master_user_id], references: [id], onUpdate: Restrict, map: "invitations_ibfk_1")
+  users_invitations_slave_user_idTousers  users?    @relation("invitations_slave_user_idTousers", fields: [slave_user_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "invitations_ibfk_2")
+
+  @@index([master_user_id], map: "master_user_id")
+  @@index([slave_user_id], map: "slave_user_id")
+}
+
 model room {
   id     Int    @id @default(autoincrement())
   type   String @db.VarChar(55)
@@ -34,18 +48,4 @@ model users {
   other_users                                   users[]       @relation("usersTousers")
 
   @@index([idMaster], map: "fk_user_master")
-}
-
-model invitations {
-  id                                      Int       @id @default(autoincrement())
-  invitation_code                         String    @unique(map: "invitation_code") @db.VarChar(10)
-  master_user_id                          Int
-  slave_user_id                           Int?
-  is_accepted                             Int       @default(0)
-  created_at                              DateTime? @default(now()) @db.DateTime(0)
-  users_invitations_master_user_idTousers users     @relation("invitations_master_user_idTousers", fields: [master_user_id], references: [id], onUpdate: Restrict, map: "invitations_ibfk_1")
-  users_invitations_slave_user_idTousers  users?    @relation("invitations_slave_user_idTousers", fields: [slave_user_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "invitations_ibfk_2")
-
-  @@index([master_user_id], map: "master_user_id")
-  @@index([slave_user_id], map: "slave_user_id")
 }
