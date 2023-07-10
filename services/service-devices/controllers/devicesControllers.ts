@@ -6,7 +6,7 @@ class devicesControllers {
     static async getRooms(req: Request, res: Response) {
         
         try {
-          const requesterId = req.params.id; // Assuming the requesterId is passed as a parameter
+          const requesterId =Number( req.params.id); // Assuming the requesterId is passed as a parameter
     
           const rooms = await DeviceService.getRooms(requesterId);
     
@@ -18,7 +18,9 @@ class devicesControllers {
       }
     static async addRoom(req: Request, res: Response) {
         try {
-          const requesterId = req.user.id ; // Assuming the requesterId is passed as a query parameter
+          console.log("yo hoh ohoh");
+          
+          const requesterId = Number( req.user.id); ; // Assuming the requesterId is passed as a query parameter
           const data = req.body; // Assuming the room name is passed in the request body
     
           const room = await DeviceService.addRoom(Number(requesterId), data);

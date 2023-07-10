@@ -77,8 +77,13 @@ class  Authentication {
 	static login = async (loginData: LoginData) => {
 
 		// Destructure loginData object
-		const { username, password,  } = loginData;
- 
+		const { username, password  } = loginData;
+        console.log(`loginData ------------------`)
+		console.log(username);
+        console.log(password);
+        console.log(`loginData ------------------`)
+
+
 		let user;
 		
 		// Find user by username or email
@@ -111,64 +116,73 @@ class  Authentication {
 			{ id: user.id, role: user.role},
 			this.jwtSecret
 		);
-		const response = {token,...user};
+		const response = {token,user};
 		return response;
 
 	};
 
 
 	static signUp = async (loginData) => {
-
-		// Destructure loginData object
-		const { username, password,email,master  } = loginData;
- 
+		const { username, password, email, invitation_code } = loginData;
 		let user;
-		
-		// Find user by username 
-			user = await  prisma.users.findFirst({
-				where: { username : username}
-			});
-
-		
-		
-		// Throw error if user  found
-		if (user) {
-
-			throw new Error(' username or email already exist');
-		
-		}
-		let idMaster = master;
-		let role = "slave";
-		if (master) {
-			role = "master";
-			idMaster = null;
-
-		}
-
-		// Hash password
-		const passwordHashed = await bcrypt.hash(
-			password,	10		
-		);
-
-		// Create user
-		user = await prisma.users.create({	
-			data: {
-				 role,email, idMaster,username  ,password: passwordHashed
-			}
+	  
+		// Find user by username
+		user = await prisma.users.findFirst({
+		  where: { username },
 		});
-
-		
-		
-
+	  
+		// Throw error if user found
+		if (user) {
+		  throw new Error('Username already exists');
+		}
+	  
+		// Check if an invitation code is provided
+		if (invitation_code) {
+		  const invitation = await prisma.invitations.findFirst({
+			where: { invitation_code },
+		  });
+	  
+		  if (!invitation) {
+			throw new Error('Invalid invitation code');
+		  }
+	  
+		  // Create the user with the provided master ID from the invitation
+		  const { master_user_id } = invitation;
+	  
+		  user = await prisma.users.create({
+			data: {
+			  username,
+			  password: await bcrypt.hash(password, 10),
+			  email,
+			  idMaster: master_user_id,
+			  role: 'slave',
+			},
+		  });
+	  
+		  // Update the invitation state to indicate it has been used
+		  await prisma.invitations.update({
+			where: { invitation_code },
+			data: { is_accepted: 1 ,slave_user_id :user.id },
+		  });
+		} else {
+		  // Create the user as a master
+		  user = await prisma.users.create({
+			data: {
+			  username,
+			  password: await bcrypt.hash(password, 10),
+			  email,
+			  role: 'master',
+			  idMaster: null,
+			},
+		  });
+		}
+	  
 		// Create JWT
-		const token = jwt.sign(
-			{ id: user.id, role: user.role},
-			this.jwtSecret
-		);
-		const response = {token,...user};
-		return response;
-
-	};
+		const token = jwt.sign({ id: user.id, role: user.role }, this.jwtSecret);
+	  
+		return { token, user };
+	  };
+	  
 
 
 	static async sendVerificationNumber(username: string) {

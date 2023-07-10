@@ -1,6 +1,7 @@
 import express from 'express';
 
 import DevicesController from '../controllers/devicesControllers';
+import Authorization from '../../../middelwares/auth';
 const route = express.Router();
 
 /**
@@ -10,7 +11,7 @@ const route = express.Router();
 */
 
 route.get('/getRooms/:id', DevicesController.getRooms); // placeid
-route.get('/addRoom', DevicesController.getRooms); // placeid
+route.post('/addRoom',Authorization(['master']) , DevicesController.addRoom); // placeid
 
 
 export default route;

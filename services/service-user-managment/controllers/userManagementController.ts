@@ -2,6 +2,25 @@ import { Request, Response } from 'express';
 import  UserManagementService from '../user-management'; 
 
 class userManagmentController {
+   static inviteUser = async (req: Request, res: Response)  => {
+      try {
+        const idMaster = req.user?.id ; // Assuming the middleware adds the id of the requester to req.user.id
+        const {userEmail} = req.body
+        console.log(`idMaster ---------------------`);
+        console.log(idMaster);
+        console.log(req.body);
+        console.log(`idMaster ---------------------`);
+
+
+        
+        const invitaion = await UserManagementService.createInvitation(idMaster,userEmail);
+        
+        res.status(200).json(invitaion);
+      } catch (error) {
+        console.error("Error inviting the user:", error);
+        res.status(500).json({ error: "Error inviting the user." });
+      }
+   }
 
     static getMyUsers = async (req: Request, res: Response) => {
         try {
@@ -18,14 +37,16 @@ class userManagmentController {
     static changeState = async (req: Request, res: Response) => {
         try {
           const requesterId = req.user?.id ; // Assuming the middleware adds the id of the requester to req.user.id    
-          const { state, userId } = req.body;
+          console.log(req.body);
+          
+          const { state, id } = req.body;
           console.log("requesterId",requesterId);
           console.log("state",state);
-          console.log("userId",userId);
+          console.log("userId",id);
           
-          await UserManagementService.changeState(requesterId, state, userId);
+          const user  = await UserManagementService.changeState(requesterId, state, id);
     
-          res.status(200).json({ message: "User's state changed successfully." });
+          res.status(200).json(user);
         } catch (error) {
           console.error("Error changing user's state:", error);
           res.status(500).json({ error: "Failed to change user's state." });
@@ -34,8 +55,8 @@ class userManagmentController {
     static delete = async (req: Request, res: Response) => {
         try {
           const requesterId = req.user?.id ;
-          const { userId, nextMaster } = req.body;
-    
+          const {  nextMaster } = req.body;
+          const userId = Number(req.params.id)
           await UserManagementService.delete(requesterId, userId, nextMaster);
     
           res.status(200).json({ message: "User deleted successfully." });
@@ -65,9 +86,9 @@ class userManagmentController {
         try {
           const requesterId = req.user?.id ; // Assuming the middleware adds the id of the requester to req.user.id    
 
-          const { userId, ...data } = req.body;
+          const  data  = req.body;
     
-          await UserManagementService.modifey(requesterId, userId, data);
+          await UserManagementService.modifey(requesterId, data);
     
           res.status(200).json({ message: "User updated successfully." });
         } catch (error) {
@@ -75,6 +96,8 @@ class userManagmentController {
           res.status(500).json({ error: "Failed to update user." });
         }
       };
+
+    
 }
 
 export default userManagmentController;

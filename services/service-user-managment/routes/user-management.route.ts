@@ -11,8 +11,9 @@ const route = express.Router();
 */
 
 route.get('/getMyUsers',Authentification(['master']), userManagementController.getMyUsers); 
-route.post('/activate'  ,Authentification(['master','slave']),   userManagementController.changeState); 
+route.post('/changeState'  ,Authentification(['master','slave']),   userManagementController.changeState); 
 route.post('/delete/:id',Authentification(['master','slave']),userManagementController.delete);
 route.post('/modifey',Authentification(['master','slave']),userManagementController.modifey);
 route.post('/changePassword',userManagementController.changePassword);
+route.post('/invite-user',Authentification(['master']),userManagementController.inviteUser)
 export default route;

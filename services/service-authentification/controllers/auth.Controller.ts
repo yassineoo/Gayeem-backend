@@ -133,6 +133,10 @@ class LoginController {
 		const { username, verificationNumber } = req.body;
 	
 		try {
+		  console.log('-------------------------------------')	
+		  console.log(req.body)	
+		  console.log('-------------------------------------')	
+
 		  const verified = await Authentication.verifyVerificationNumber(username, verificationNumber);
 	
 		  if (verified) {
