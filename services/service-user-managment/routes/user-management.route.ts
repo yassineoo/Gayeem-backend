@@ -16,5 +16,5 @@ route.post('/delete/:id',Authentification(['master','slave']),userManagementCont
 route.post('/modifey',Authentification(['master','slave']),userManagementController.modifey);
 route.post('/changePassword',userManagementController.changePassword);
 route.post('/invite-user',Authentification(['master']),userManagementController.inviteUser)
-route.post('/haveIssues',Authentification(['master','slave']),userManagementController.createIssue)
+route.post('/createIssue',Authentification(['master','slave']),userManagementController.createIssue)
 export default route;

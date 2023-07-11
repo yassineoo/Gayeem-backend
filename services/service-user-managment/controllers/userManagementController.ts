@@ -67,12 +67,13 @@ class userManagmentController {
       };
       
     static createIssue = async (req: Request, res: Response) => {
-        const { complaintText, userId } = req.body;
-      
+        const { complaintText } = req.body;
+        const userId = req.user?.id ; // Assuming the middleware adds the id of the requester to req.user.id    
+        console.log(userId,' says :' ,complaintText  );
         try {
           const createdIssue = await UserManagementService.createIssue(complaintText, userId);
       
-          return res.status(201).json({ message: 'Issue created successfully', issue: createdIssue });
+          return res.status(201).json({ message: 'Issue created successfully'});
         } catch (error) {
           console.error(error);
           return res.status(500).json({ message: 'Error creating issue' });
