@@ -21,6 +21,17 @@ model invitations {
   @@index([slave_user_id], map: "slave_user_id")
 }
 
+model issues {
+  id             Int      @id @default(autoincrement())
+  user_id        Int?
+  complaint_text String?  @db.Text
+  date           DateTime @default(now()) @db.Timestamp(0)
+  state          String?  @default("pending") @db.Text
+  users          users?   @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "issues_ibfk_1")
+
+  @@index([user_id], map: "user_id")
+}
+
 model room {
   id     Int    @id @default(autoincrement())
   type   String @db.VarChar(55)
@@ -43,6 +54,7 @@ model users {
   selectedAvatarId                              Int?
   invitations_invitations_master_user_idTousers invitations[] @relation("invitations_master_user_idTousers")
   invitations_invitations_slave_user_idTousers  invitations[] @relation("invitations_slave_user_idTousers")
+  issues                                        issues[]
   room                                          room[]
   users                                         users?        @relation("usersTousers", fields: [idMaster], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "fk_user_master")
   other_users                                   users[]       @relation("usersTousers")

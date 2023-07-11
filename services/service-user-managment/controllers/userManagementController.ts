@@ -65,6 +65,20 @@ class userManagmentController {
           res.status(500).json({ error: "Failed to delete user." });
         }
       };
+      
+    static createIssue = async (req: Request, res: Response) => {
+        const { complaintText, userId } = req.body;
+      
+        try {
+          const createdIssue = await UserManagementService.createIssue(complaintText, userId);
+      
+          return res.status(201).json({ message: 'Issue created successfully', issue: createdIssue });
+        } catch (error) {
+          console.error(error);
+          return res.status(500).json({ message: 'Error creating issue' });
+        }
+      };
+      
 
       static changePassword = async (req: Request, res: Response) => {
         try {

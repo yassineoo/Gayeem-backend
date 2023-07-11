@@ -201,6 +201,25 @@ class UserManagementService {
 
     
 
+  // Function to create a new issue
+static createIssue= async (complaintText: string, userId: number) => {
+  try {
+    const createdIssue = await prisma.issues.create({
+      data: {
+        complaint_text : complaintText,
+        user_id: userId },
+      },
+    );
+  return createdIssue;
+
+  
+    
+  } catch (error) {
+    throw new Error('Failed to create issue.');
+    
+  }
+
+}
 
 }
 
